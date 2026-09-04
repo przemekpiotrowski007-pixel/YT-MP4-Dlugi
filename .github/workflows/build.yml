@@ -1,40 +1,71 @@
-name: Build YT MP4 Dlugi v3 APK
-
-on:
-  push:
-    branches: [ "main", "master" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restore project
-        shell: bash
-        run: |
-          cat > /tmp/project.b64 <<'EOF'
-          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
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YouTube → MP4 720p</title>
+<style>
+body{font-family:Arial,sans-serif;background:#111;color:#fff;max-width:720px;margin:60px auto;padding:20px}
+.card{background:#1b1b1b;padding:24px;border-radius:18px}
+input,button{font-size:17px;padding:14px;border-radius:10px;border:0}
+input{width:65%;min-width:220px}
+button{font-weight:700;cursor:pointer}
+#s{margin-top:18px;white-space:pre-wrap}
+a{color:#fff}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>YouTube → MP4 720p</h1>
+<p>Wklej link do filmu i kliknij pobieranie.</p>
+<input id="u" placeholder="https://www.youtube.com/watch?v=...">
+<button id="b">Pobierz MP4 720p</button>
+<div id="s"></div>
+</div>
+<script>
+const API='https://mp4-cobalt-api3.onrender.com/';
+b.onclick=async()=>{
+  const url=u.value.trim();
+  if(!url){s.textContent='Wklej link do filmu.';return}
+  b.disabled=true;s.textContent='Przygotowuję plik...';
+  try{
+    const r=await fetch(API,{
+      method:'POST',
+      headers:{'Accept':'application/json','Content-Type':'application/json'},
+      body:JSON.stringify({
+        url,
+        videoQuality:'720',
+        downloadMode:'auto',
+        youtubeVideoCodec:'h264',
+        youtubeVideoContainer:'mp4',
+        filenameStyle:'pretty'
+      })
+    });
+    const j=await r.json();
+    if(j.status==='tunnel'||j.status==='redirect'){
+      s.innerHTML='Gotowe. <a href="'+j.url+'">Kliknij tutaj, jeśli pobieranie nie ruszy samo.</a>';
+      location.href=j.url;
+    }else if(j.status==='picker'){
+      s.innerHTML='';
+      (j.picker||[]).forEach((x,i)=>{
+        const a=document.createElement('a');
+        a.href=x.url;a.textContent='Pobierz plik '+(i+1);a.target='_blank';
+        s.appendChild(a);s.appendChild(document.createElement('br'));
+      });
+    }else if(j.status==='error'){
+      throw new Error(j.error?.code||'Błąd API');
+    }else{
+      throw new Error('Nieobsługiwana odpowiedź: '+j.status);
+    }
+  }catch(e){
+    s.textContent='Błąd: '+(e.message||e);
+  }finally{
+    b.disabled=false;
+  }
+};
+</script>
+</body>
+</html>          A3MQtNEHy2FRl5xYlAJUZmgKgriVFaWCVLm5GRkY4TEMqCo+JbEIZK+TqYEBPnvLMzJLUsFGggBudbmlJWCrHS1BEK7ORh/J8wBQ
           SwMECgAAAAAAenkkXQAAAAAAAAAAAAAAABIAHABhcHAvc3JjL21haW4vamF2YS9VVAkAA7jfmmpk4ppqdXgLAAEEAAAAAATpAwAA
           UEsDBAoAAAAAAHp5JF0AAAAAAAAAAAAAAAAWABwAYXBwL3NyYy9tYWluL2phdmEvY29tL1VUCQADuN+aamTimmp1eAsAAQQAAAAA
           BOkDAABQSwMECgAAAAAAenkkXQAAAAAAAAAAAAAAABwAHABhcHAvc3JjL21haW4vamF2YS9jb20vZGx1Z2kvVVQJAAO435pqZOKa
