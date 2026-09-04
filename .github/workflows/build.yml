@@ -1,40 +1,58 @@
-<!doctype html>
-<html lang="pl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>YouTube → MP4 720p</title>
-<style>
-body{font-family:Arial,sans-serif;background:#111;color:#fff;max-width:720px;margin:60px auto;padding:20px}
-.card{background:#1b1b1b;padding:24px;border-radius:18px}
-input,button{font-size:17px;padding:14px;border-radius:10px;border:0}
-input{width:65%;min-width:220px}
-button{font-weight:700;cursor:pointer}
-#s{margin-top:18px;white-space:pre-wrap}
-a{color:#fff}
-</style>
-</head>
-<body>
-<div class="card">
-<h1>YouTube → MP4 720p</h1>
-<p>Wklej link do filmu i kliknij pobieranie.</p>
-<input id="u" placeholder="https://www.youtube.com/watch?v=...">
-<button id="b">Pobierz MP4 720p</button>
-<div id="s"></div>
-</div>
-<script>
-const API='https://mp4-cobalt-api3.onrender.com/';
-b.onclick=async()=>{
-  const url=u.value.trim();
-  if(!url){s.textContent='Wklej link do filmu.';return}
-  b.disabled=true;s.textContent='Przygotowuję plik...';
-  try{
-    const r=await fetch(API,{
-      method:'POST',
-      headers:{'Accept':'application/json','Content-Type':'application/json'},
-      body:JSON.stringify({
-        url,
-        videoQuality:'720',
+name: Build YT MP4 Dlugi v3 APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Extract project
+        shell: bash
+        run: |
+          mkdir -p appsrc
+          unzip -q YT-MP4-Dlugi-v3-project.zip -d appsrc
+          echo "PROJECT_DIR=$GITHUB_WORKSPACE/appsrc" >> "$GITHUB_ENV"
+
+      - name: Build APK
+        shell: bash
+        run: |
+          cd "$PROJECT_DIR"
+          printf '%s\n' \
+            'org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8' \
+            'org.gradle.workers.max=2' \
+            'org.gradle.parallel=false' \
+            'android.useAndroidX=true' \
+            'android.enableJetifier=true' > gradle.properties
+          gradle --no-daemon assembleDebug
+
+      - name: Rename APK
+        shell: bash
+        run: |
+          cp "$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk" "$GITHUB_WORKSPACE/YT-MP4-Dlugi-v3.apk"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: YT-MP4-Dlugi-v3-APK
+          path: YT-MP4-Dlugi-v3.apk        videoQuality:'720',
         downloadMode:'auto',
         youtubeVideoCodec:'h264',
         youtubeVideoContainer:'mp4',
